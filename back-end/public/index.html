@@ -23,7 +23,7 @@
             <button class="login-option">Continue with phone number</button>
             <div class="forgoogle">
                 <div id="g_id_onload" 
-             data-client_id="1039484967279-b0uv9c8m0t6v453c7im8f0jiopq82v3j.apps.googleusercontent.com"
+             data-client_id="YOUR_GOOGLE_CLIENT_ID"
              data-context="signin"
              data-ux_mode="popup"
              data-callback="handleCredentialResponse"
@@ -39,7 +39,7 @@
 </div>
     
             <div class="divider"><span>OR</span></div>
-    
+
             <form class="login-form">
                 <div class="form-group">
                     <input id="email" type="text" placeholder="Email or username" required>
@@ -47,56 +47,32 @@
                 <div class="form-group">
                     <input id="password" type="password" placeholder="Password" required>
                 </div>
-                <a class="forgot-password">Forgot password?</a>
+                <a href="#" class="forgot-password pointer" id="forgot-password-link">Forgot password?</a>
                 <button id="login-btn" type="submit">Log In</button>
             </form>
-    
-            <p class="signup-text">New to Reddit? <a href="#">Sign Up</a></p>
-        </div> 
-        <div class="login-modal forsignup">
-            <div class="login-header">
-                <h2>Sign up</h2>
-                <span class="close-btn">&times;</span>
+
+            <!-- Biểu mẫu nhập email để đặt lại mật khẩu, ban đầu ẩn -->
+            <div id="forgot-password-container" style="display: none;">
+                <h3>Nhập Email để nhận mã xác nhận:</h3>
+                <form id="forgot-password-form">
+                    <input type="email" id="forgot-email" name="email" placeholder="Enter your email" required>
+                    <button type="submit" class="forgot-password pointer">Gửi mã xác nhận</button>
+                </form>
+                <div id="forgot-password-message"></div>
             </div>
-            <p>
-                By continuing, you agree to our <a href="#">User Agreement</a> and acknowledge that you understand the <a href="#">Privacy Policy</a>.
-            </p>
-            
-            <button class="login-option">Continue with phone number</button>
-            <div class="forgoogle">
-                <div id="g_id_onload" 
-             data-client_id="1039484967279-b0uv9c8m0t6v453c7im8f0jiopq82v3j.apps.googleusercontent.com"
-             data-context="signin"
-             data-ux_mode="popup"
-             data-callback="handleCredentialResponse"
-             data-auto_prompt="false">
-        </div>
-        <div class="g_id_signin" 
-             data-type="standard" 
-             data-size="large" 
-             data-shape="pill" 
-             data-theme="filled_blue"
-             data-logo_alignment="left">
-        </div>
-</div>
-            <button class="login-option apple-login">Continue with Facebook</button>
-    
-            <div class="divider"><span>OR</span></div>
-    
-            <form class="login-form">
-                <div class="form-group">
-                    <input id="email" type="text" placeholder="Email or username" required>
-                </div>
-                <div class="form-group">
-                    <input id="password" type="password" placeholder="Password" required>
-                </div>
-                <div class="form-group">
-                     <input placeholder="user_name" required>
-                </div>
-                   <button id="login-btn" type="submit">Sign up</button>
-                </div>
-                
-            </form>
+
+            <!-- Biểu mẫu nhập mật khẩu mới, ban đầu ẩn -->
+            <div id="reset-password-container" style="display: none;">
+                <h3>Nhập mã xác nhận và mật khẩu mới:</h3>
+                <form id="reset-password-form">
+                    <input type="text" id="reset-code" placeholder="Mã xác nhận" required>
+                    <input type="password" id="new-password" placeholder="Mật khẩu mới" required>
+                    <button type="submit" class="forgot-password pointer">Đặt lại mật khẩu</button>
+                </form>
+                <div id="reset-password-message"></div>
+            </div>
+
+            <p class="signup-text">New to Reddit? <a href="#">Sign Up</a></p>
         </div> 
     </div>
 
@@ -107,7 +83,6 @@
             <button class="btn main_login">Đăng nhập</button>
             <button class="btn main_signup">Đăng ký</button>
         </div>
-    
     </header>
 
     <section class="content">
@@ -115,5 +90,84 @@
     </section>
 </div>
 <script src="./js/index.js"></script>
+<script>
+    // Xử lý sự kiện nhấn vào liên kết Forgot Password
+    document.getElementById('forgot-password-link').addEventListener('click', function(event) {
+        event.preventDefault(); // Ngăn chặn hành động mặc định của liên kết
+        document.getElementById('forgot-password-container').style.display = 'block'; // Hiện biểu mẫu
+    });
+
+    // Xử lý gửi biểu mẫu quên mật khẩu
+    document.getElementById('forgot-password-form').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Ngăn chặn hành động gửi mặc định của biểu mẫu
+
+        const email = document.getElementById('forgot-email').value;
+        const responseMessageDiv = document.getElementById('forgot-password-message');
+
+        try {
+            const response = await fetch('/forgot/forgot-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Thông báo thành công
+                responseMessageDiv.textContent = data.message;
+                responseMessageDiv.style.color = 'green';
+
+                // Hiện biểu mẫu đặt lại mật khẩu
+                document.getElementById('reset-password-container').style.display = 'block';
+            } else {
+                // Thông báo lỗi
+                responseMessageDiv.textContent = data.message;
+                responseMessageDiv.style.color = 'red';
+            }
+        } catch (error) {
+            responseMessageDiv.textContent = 'Có lỗi xảy ra. Vui lòng thử lại!';
+            responseMessageDiv.style.color = 'red';
+        }
+    });
+
+    // Xử lý gửi biểu mẫu đặt lại mật khẩu
+    document.getElementById('reset-password-form').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Ngăn chặn hành động gửi mặc định của biểu mẫu
+
+        const email = document.getElementById('forgot-email').value; // Lấy email từ form quên mật khẩu
+        const code = document.getElementById('reset-code').value;
+        const newPassword = document.getElementById('new-password').value;
+        const resetResponseMessageDiv = document.getElementById('reset-password-message');
+
+        try {
+            const response = await fetch('/forgot/reset-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, code, newPassword })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Thông báo thành công
+                resetResponseMessageDiv.textContent = data.message;
+                resetResponseMessageDiv.style.color = 'green';
+            } else {
+                // Thông báo lỗi
+                resetResponseMessageDiv.textContent = data.message;
+                resetResponseMessageDiv.style.color = 'red';
+            }
+        } catch (error) {
+            resetResponseMessageDiv.textContent = 'Có lỗi xảy ra. Vui lòng thử lại reset pas html!';
+            resetResponseMessageDiv.style.color = 'red';
+        }
+    });
+</script>
+
 </body>
 </html>

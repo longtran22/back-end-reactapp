@@ -1,0 +1,9 @@
+const express = require('express');
+const morgan = require('morgan');
+const cors = require('cors');
+const routes = require('./routes/main');
+const path = require('path');
+const app = express();
+const mongodb = require('./modules/config/db'); // Kết nối DB chính
+const connectOtherDB = require('./modules/config/dbcourse'); // Kết nối DB khác
+const bodyParser = require('body-parser');

@@ -1,0 +1,36 @@
+<div class="mt-4"></div>
+    <h3>EDIT SAN PHAM </h3>
+    <form class="mt-4" method="POST" action="/courses/{{course._id}}?_method=PUT">  
+        <div class="form-group">
+            <label for="name">TÊN SAN PHAM</label>
+            <input type="text" class="form-control" value="{{course.name}}" id="name" name="name">
+        </div>
+
+        <div class="form-group">
+            <label for="description">DESCRIPTION</label>
+            <textarea class="form-control" id="description" name="description">{{course.description}}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="videoId">VIDEOID</label>
+            <input type="text" class="form-control" value="{{course.videoId}}" id="videoId" name="videoId">
+        </div>
+
+        <!-- Trường country -->
+        <div class="form-group">
+            <label for="country">COUNTRY</label>
+            <input type="text" class="form-control" value="{{course.country}}" id="country" name="country">
+        </div>
+
+        <!-- Trường count -->
+        {{!-- <div class="form-group">
+            <label for="count">COUNT</label>
+            <input type="number" class="form-control" value="{{course.count}}" id="count" name="count">
+        </div> --}}
+        <div class="form-group">
+            <label for="count">COUNT</label>
+            <input type="number" class="form-control" value="{{course.count}}" id="count" name="count">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>

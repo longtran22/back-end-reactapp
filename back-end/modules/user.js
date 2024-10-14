@@ -4,9 +4,16 @@ const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String },
     password: { type: String },
-    GoogleID: { type: String ,default: null }
+    GoogleID: { type: String ,default: null },
+    resetCode: String,
+    resetCodeExpire: Date,
 });
-
+// const userSchema = new mongoose.Schema({
+//     email: { type: String, required: true, unique: true },
+//     password: { type: String, required: true },
+//     resetCode: String,
+//     resetCodeExpire: Date,     c
+// });
 // Custom validation to check email/password or GoogleID
 userSchema.path('email').validate(function(value) {
     if (!this.email && !this.password && !this.GoogleID) {
